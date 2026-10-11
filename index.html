@@ -102,6 +102,26 @@ footer{color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:
 .pvid video{width:100%;max-height:100%;background:#000}
 .perr{padding:16px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
 .perr a{color:#fff;font-weight:600}
+
+/* Install banner + sheet */
+.install{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 12px 12px 14px}
+.install img{width:44px;height:44px;border-radius:10px;flex:none}
+.install .txt{flex:1}
+.install .btn{min-height:40px;padding:0 14px;font-size:15px;background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.install .x{background:none;border:0;color:var(--muted);font-size:22px;line-height:1;padding:6px;cursor:pointer}
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(10,14,20,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet-card{width:100%;max-width:560px;background:var(--surface);color:var(--ink);border-radius:20px 20px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px;max-height:90%;overflow:auto}
+.sheet-card h2{font:400 24px/1.2 var(--display);margin:0}
+.sheet-card p{margin:0;color:var(--muted)}
+.steps{list-style:none;margin:0;padding:0;border:0;background:none;display:flex;flex-direction:column;gap:14px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:start;border:0}
+.steps li::before{counter-increment:s;content:counter(s);width:32px;height:32px;border-radius:50%;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;font-weight:600;font-variant-numeric:tabular-nums}
+.ico{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:7px;background:var(--bg);border:1px solid var(--line);vertical-align:middle;margin:0 2px}
+.ico svg{width:16px;height:16px;fill:none;stroke:var(--focus);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.linkbox{display:flex;gap:8px}
+.linkbox input{flex:1;min-width:0;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:15px var(--body);padding:0 10px}
+.linkbox .btn{min-height:44px;padding:0 14px;font-size:15px}
+.share{background:none;border:1px solid var(--line);border-radius:12px;min-height:44px;padding:0 16px;font-weight:600;color:var(--ink);cursor:pointer;align-self:flex-start}
 </style>
 </head>
 <body>
@@ -110,6 +130,13 @@ footer{color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:
     <span class="eyebrow">Trinity Episcopal · Capitol Square</span>
     <h1>Live Stream Liturgy</h1>
   </header>
+
+  <div class="install" id="install" hidden>
+    <img src="icons/apple-touch-icon.png" alt="">
+    <div class="txt"><b id="instTitle">Get the Trinity app</b><span id="instSub">Add it to your Home Screen</span></div>
+    <button class="btn" id="instBtn" type="button">Install</button>
+    <button class="x" id="instX" type="button" aria-label="Not now">×</button>
+  </div>
 
   <section class="live" id="live" aria-live="polite">
     <div class="live-top"><span class="dot"></span><div><div class="live-label" id="liveLabel">Sunday Eucharist, 10:30 a.m.</div><div class="live-sub" id="liveSub">Streamed on Facebook</div></div></div>
@@ -135,6 +162,7 @@ footer{color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:
       <span><i style="background:var(--c-green)"></i>Ordinary Time</span>
     </div>
     <div>Services pick up where you left off. Watched and in-progress marks are kept on this device.</div>
+    <button class="share" id="shareBtn" type="button">Share this app</button>
     <div id="checked"></div>
     <div>Unofficial viewer. Videos and the live stream belong to <a href="https://www.trinitycolumbus.org" target="_blank" rel="noopener">Trinity Episcopal Church</a>.</div>
   </footer>
@@ -148,6 +176,33 @@ footer{color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:
   <div class="pvid">
     <video id="video" controls playsinline preload="metadata"></video>
     <div class="perr" id="pErr" hidden><div>This video didn't load.</div><a id="pOpen" href="#" target="_blank" rel="noopener">Open it in Safari instead</a></div>
+  </div>
+</div>
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-card">
+    <h2 id="sheetTitle">Add Trinity to your Home Screen</h2>
+
+    <div id="sheetIos" hidden>
+      <ol class="steps">
+        <li><div>Tap the <b>Share</b> button <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5M5 12v8h14v-8"/></svg></span> in Safari's toolbar. On newer iPhones, tap <b>•••</b> first, then <b>Share</b>.</div></li>
+        <li><div>Scroll down and tap <b>Add to Home Screen</b> <span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/></svg></span>. If you don't see it, tap <b>More</b> or <b>Edit Actions</b> at the bottom of the list.</div></li>
+        <li><div>Tap <b>Add</b>. The Trinity icon appears on your Home Screen and opens like an app.</div></li>
+      </ol>
+    </div>
+
+    <div id="sheetInapp" hidden style="display:flex;flex-direction:column;gap:12px">
+      <p>This page is open inside another app, which can't add icons to your Home Screen. Open it in <b>Safari</b> instead: tap <b>•••</b> or the compass and choose <b>Open in Safari</b>, or copy the link and paste it into Safari.</p>
+    </div>
+
+    <div id="sheetOther" hidden style="display:flex;flex-direction:column;gap:12px">
+      <p><b>Android:</b> in Chrome, tap the <b>⋮</b> menu, then <b>Install app</b> or <b>Add to Home screen</b>.</p>
+      <p><b>iPhone:</b> open this link in Safari, tap <b>Share</b>, then <b>Add to Home Screen</b>.</p>
+      <p>On a computer? Copy the link below and send it to your phone.</p>
+    </div>
+
+    <div class="linkbox"><input id="appLink" readonly aria-label="App link"><button class="btn" id="copyBtn" type="button">Copy link</button></div>
+    <button class="btn" id="sheetClose" type="button">Done</button>
   </div>
 </div>
 
@@ -275,6 +330,59 @@ function updateLive(){
 }
 updateLive();setInterval(updateLive,30000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)updateLive()});
+
+// Install help. iOS has no install API, so iPhones get step-by-step instructions;
+// Android Chrome fires beforeinstallprompt and gets a real one-tap install.
+const APP_URL=location.origin+location.pathname;
+const ua=navigator.userAgent;
+const isIOS=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);
+const isStandalone=navigator.standalone===true||matchMedia("(display-mode: standalone)").matches;
+const isInApp=/FBAN|FBAV|FB_IAB|Instagram|LinkedInApp|Line\/|GSA\/|Snapchat|Twitter|MicroMessenger|DuckDuckGo\/7/.test(ua);
+const isMobile=isIOS||/Android/.test(ua);
+let deferredPrompt=null;
+const inst=document.getElementById("install"),sheet=document.getElementById("sheet");
+document.getElementById("appLink").value=APP_URL;
+
+function dismissedRecently(){try{return Date.now()-(+localStorage.getItem("trinity-install-dismissed")||0)<14*864e5}catch(e){return false}}
+function showBanner(title,sub,btn){
+  if(isStandalone||dismissedRecently())return;
+  document.getElementById("instTitle").textContent=title;
+  document.getElementById("instSub").textContent=sub;
+  document.getElementById("instBtn").textContent=btn;
+  inst.hidden=false;
+}
+function openSheet(which){
+  for(const id of["sheetIos","sheetInapp","sheetOther"])document.getElementById(id).hidden=id!==which;
+  sheet.hidden=false;
+}
+if(!isStandalone){
+  if(isIOS&&isInApp)showBanner("Get the Trinity app","Open this page in Safari first","How");
+  else if(isIOS)showBanner("Get the Trinity app","Add it to your Home Screen in 3 taps","Show me");
+  else if(!isMobile)showBanner("Get the Trinity app","Install it on your phone","How");
+}
+// Chrome may not offer its install prompt; fall back to menu instructions.
+if(!isStandalone&&/Android/.test(ua))setTimeout(()=>{if(!deferredPrompt)showBanner("Get the Trinity app","Add it to your Home Screen","How")},3000);
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;showBanner("Get the Trinity app","Install it on this phone","Install")});
+window.addEventListener("appinstalled",()=>{inst.hidden=true;deferredPrompt=null});
+document.getElementById("instBtn").addEventListener("click",async()=>{
+  if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice.catch(()=>{});deferredPrompt=null;inst.hidden=true;return}
+  openSheet(isIOS&&isInApp?"sheetInapp":isIOS?"sheetIos":"sheetOther");
+});
+document.getElementById("instX").addEventListener("click",()=>{inst.hidden=true;try{localStorage.setItem("trinity-install-dismissed",String(Date.now()))}catch(e){}});
+document.getElementById("sheetClose").addEventListener("click",()=>{sheet.hidden=true});
+sheet.addEventListener("click",e=>{if(e.target===sheet)sheet.hidden=true});
+document.getElementById("copyBtn").addEventListener("click",async e=>{
+  const b=e.currentTarget,input=document.getElementById("appLink");
+  try{await navigator.clipboard.writeText(APP_URL);b.textContent="Copied"}
+  catch(_){input.select();b.textContent="Selected"}
+  setTimeout(()=>b.textContent="Copy link",2000);
+});
+document.getElementById("shareBtn").addEventListener("click",async e=>{
+  const data={title:"Trinity Liturgies",text:"Trinity Episcopal's live stream and past services. Open in Safari, then Share → Add to Home Screen.",url:APP_URL};
+  if(navigator.share){try{await navigator.share(data)}catch(_){}return}
+  try{await navigator.clipboard.writeText(APP_URL);e.currentTarget.textContent="Link copied"}
+  catch(_){openSheet("sheetOther")}
+});
 
 fetch("services.json",{cache:"no-cache"}).then(r=>r.json()).then(d=>{
   services=d.services||[];unavailable=d.unavailable||[];window._fb=d.latestFacebook;
