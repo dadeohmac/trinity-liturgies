@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Trinity Liturgies</title>
+<meta name="description" content="Live stream and archived liturgies from Trinity Episcopal Church on Capitol Square, Columbus.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Trinity">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#eef0f2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12161d" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout: one narrow column like a service leaflet. A live card on top, then services grouped by church year, each row marked with its liturgical color. */
+:root{
+  --bg:#eef0f2; --surface:#ffffff; --ink:#1d2533; --muted:#5d6675; --line:#d9dde3;
+  --live:#a3202c; --live-ink:#ffffff; --focus:#2f5d9e; --gold:#b8912f;
+  --c-green:#2f7d4f; --c-purple:#6b3f8f; --c-white:#c9a43a; --c-red:#b3262f; --c-blue:#2f5d9e;
+  --display:"Marcellus","Trajan Pro",Georgia,serif;
+  --body:"Source Sans 3",-apple-system,"Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#12161d; --surface:#1b212b; --ink:#e7eaef; --muted:#9aa3b2; --line:#2c3441;
+  --live:#d0424e; --live-ink:#ffffff; --focus:#7ea6e0; --gold:#e2c25e;
+  --c-green:#4fae75; --c-purple:#a57bd0; --c-white:#e2c25e; --c-red:#e0555e; --c-blue:#6d9be0;
+  color-scheme:dark}}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.45 var(--body);-webkit-text-size-adjust:100%;
+  padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+[hidden]{display:none!important}
+.wrap{max-width:560px;margin:0 auto;padding:20px 16px 48px;display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-direction:column;gap:2px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font:400 30px/1.1 var(--display);margin:0;text-wrap:balance}
+a{color:inherit}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:10px}
+button{font:inherit;color:inherit}
+
+.live{display:flex;flex-direction:column;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.live-top{display:flex;align-items:center;gap:10px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--muted);flex:none}
+.live.on .dot{background:var(--live);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.live.on .dot{animation:none}}
+.live-label{font-weight:600}
+.live-sub{color:var(--muted);font-size:15px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:12px;font-weight:600;text-decoration:none;font-size:17px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.live.on .btn.primary{background:var(--live);border-color:var(--live);color:var(--live-ink)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2 .btn{min-height:44px;font-size:15px}
+
+.feature{display:flex;flex-direction:column;gap:4px;text-align:left;width:100%;border:0;cursor:pointer;background:var(--ink);color:var(--bg);border-radius:16px;padding:16px 18px;text-decoration:none}
+.feature .k{font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.75;font-weight:600}
+.feature .t{font:400 24px/1.15 var(--display)}
+.feature .d{font-size:15px;opacity:.8}
+.fbnote{display:flex;flex-direction:column;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;font-size:15px}
+.fbnote b{font-weight:600}
+.fbnote span{color:var(--muted)}
+
+.search{width:100%;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;padding:0 14px;-webkit-appearance:none}
+
+.year{display:flex;flex-direction:column;gap:6px}
+.year h2{font:400 20px/1.2 var(--display);margin:8px 0 0;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.year h2 small{font:600 12px var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+ul{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+li+li{border-top:1px solid var(--line)}
+.svc{display:grid;grid-template-columns:4px 1fr auto;align-items:center;gap:12px;padding:12px 14px 12px 12px;min-height:58px;width:100%;background:none;border:0;text-align:left;cursor:pointer}
+.sw{width:4px;align-self:stretch;border-radius:2px;background:var(--c-green)}
+.sw.purple{background:var(--c-purple)}.sw.white{background:var(--c-white)}.sw.red{background:var(--c-red)}.sw.blue{background:var(--c-blue)}
+.txt{min-width:0;display:flex;flex-direction:column}
+.txt b{font-weight:600}
+.txt span{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.tag{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.tag.part{color:var(--gold)}
+.play{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center}
+.play svg{width:12px;height:12px;fill:var(--ink);margin-left:2px}
+li.watched b{color:var(--muted);font-weight:400}
+li.na .svc{cursor:default}
+li.na b{color:var(--muted);font-weight:400}
+.empty{color:var(--muted);text-align:center;padding:12px}
+footer{color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:6px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+/* Player sheet */
+.player{position:fixed;inset:0;z-index:10;background:#000;color:#fff;display:flex;flex-direction:column;
+  padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+.pbar{display:flex;align-items:center;gap:12px;padding:10px 16px}
+.pbar button{background:rgba(255,255,255,.14);border:0;border-radius:999px;min-height:40px;padding:0 16px;font-weight:600;cursor:pointer;color:#fff}
+.ptitle{min-width:0;display:flex;flex-direction:column}
+.ptitle b{font:400 19px/1.2 var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ptitle span{font-size:13px;opacity:.7}
+.pvid{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+.pvid video{width:100%;max-height:100%;background:#000}
+.perr{padding:16px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.perr a{color:#fff;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Trinity Episcopal · Capitol Square</span>
+    <h1>Live Stream Liturgy</h1>
+  </header>
+
+  <section class="live" id="live" aria-live="polite">
+    <div class="live-top"><span class="dot"></span><div><div class="live-label" id="liveLabel">Sunday Eucharist, 10:30 a.m.</div><div class="live-sub" id="liveSub">Streamed on Facebook</div></div></div>
+    <a class="btn primary" href="https://www.facebook.com/trinitycolumbus/live_videos" target="_blank" rel="noopener">Watch live on Facebook</a>
+    <div class="row2">
+      <a class="btn" href="https://www.trinitycolumbus.org/live-stream-liturgy" target="_blank" rel="noopener">Bulletin &amp; stream page</a>
+      <a class="btn" href="https://www.trinitycolumbus.org/archive-of-live-stream-liturgies" target="_blank" rel="noopener">Church's archive</a>
+    </div>
+  </section>
+
+  <section id="latest" style="display:flex;flex-direction:column;gap:10px"></section>
+
+  <input class="search" id="q" type="search" placeholder="Find a service: Easter, Lent 3, Pride…" aria-label="Find a service" autocomplete="off">
+
+  <div id="list"><p class="empty">Loading services…</p></div>
+
+  <footer>
+    <div class="legend" aria-label="Liturgical colors">
+      <span><i style="background:var(--c-blue)"></i>Advent</span>
+      <span><i style="background:var(--c-white)"></i>Feasts &amp; Easter</span>
+      <span><i style="background:var(--c-purple)"></i>Lent</span>
+      <span><i style="background:var(--c-red)"></i>Holy Week &amp; Pentecost</span>
+      <span><i style="background:var(--c-green)"></i>Ordinary Time</span>
+    </div>
+    <div>Services pick up where you left off. Watched and in-progress marks are kept on this device.</div>
+    <div id="checked"></div>
+    <div>Unofficial viewer. Videos and the live stream belong to <a href="https://www.trinitycolumbus.org" target="_blank" rel="noopener">Trinity Episcopal Church</a>.</div>
+  </footer>
+</div>
+
+<div class="player" id="player" hidden role="dialog" aria-modal="true" aria-labelledby="pTitle">
+  <div class="pbar">
+    <button id="pClose" type="button">Done</button>
+    <div class="ptitle"><b id="pTitle"></b><span id="pDate"></span></div>
+  </div>
+  <div class="pvid">
+    <video id="video" controls playsinline preload="metadata"></video>
+    <div class="perr" id="pErr" hidden><div>This video didn't load.</div><a id="pOpen" href="#" target="_blank" rel="noopener">Open it in Safari instead</a></div>
+  </div>
+</div>
+
+<script>
+const fmt=new Intl.DateTimeFormat("en-US",{weekday:"short",month:"long",day:"numeric",year:"numeric",timeZone:"UTC"});
+const dt=s=>new Date(s+"T12:00:00Z");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let services=[],unavailable=[];
+
+function color(t){
+  const s=t.toLowerCase();
+  if(/palm|good friday|day of pentecost|pride/.test(s))return"red";
+  if(/advent/.test(s))return"blue";
+  if(/lent/.test(s))return"purple";
+  if(/easter|christmas|carols|saints|trinity sunday|presentation|epiphany 1\b|celebration|francis|last sunday after pentecost/.test(s))return"white";
+  return"green";
+}
+// Church year starts on Advent 1 (the Sunday nearest Nov 30). RCL years cycle A/B/C; Advent 2025 began Year A.
+function churchYear(iso){
+  const d=dt(iso),y=d.getUTCFullYear();
+  const nov30=Date.UTC(y,10,30),wd=new Date(nov30).getUTCDay();
+  const advent=new Date(nov30+(wd<=3?-wd:7-wd)*864e5);
+  const start=d>=advent?y:y-1;
+  return{start,label:`${start}–${String(start+1).slice(2)}`,cycle:"ABC"[((start-2025)%3+3)%3]};
+}
+
+// Per-device progress: {url: {t: seconds, done: bool}}
+let prog={};
+try{prog=JSON.parse(localStorage.getItem("trinity-progress")||"{}")}catch(e){}
+function saveProg(){try{localStorage.setItem("trinity-progress",JSON.stringify(prog))}catch(e){}}
+
+const playIcon='<span class="play" aria-hidden="true"><svg viewBox="0 0 10 12"><path d="M0 0l10 6-10 6z"/></svg></span>';
+function status(u){
+  const p=prog[u];
+  if(p&&p.done)return'<span class="tag">Watched</span>';
+  if(p&&p.t>30)return`<span class="tag part">${Math.floor(p.t/60)} min in</span>`;
+  return playIcon;
+}
+function row(it){
+  if(!it.url)return`<li class="na"><div class="svc"><span class="sw ${color(it.title)}"></span><span class="txt"><b>${esc(it.title)}</b><span>${fmt.format(dt(it.date))}</span></span><span class="tag">No video</span></div></li>`;
+  return`<li class="${prog[it.url]&&prog[it.url].done?"watched":""}"><button class="svc" type="button" data-u="${esc(it.url)}">
+    <span class="sw ${color(it.title)}"></span>
+    <span class="txt"><b>${esc(it.title)}</b><span>${fmt.format(dt(it.date))}</span></span>
+    ${status(it.url)}</button></li>`;
+}
+
+function render(){
+  const q=document.getElementById("q").value.trim().toLowerCase();
+  const all=services.concat(unavailable.filter(u=>!/cancel/i.test(u.title))).sort((a,b)=>b.date.localeCompare(a.date));
+  const list=all.filter(it=>!q||(it.title+" "+fmt.format(dt(it.date))).toLowerCase().includes(q));
+  const groups=new Map();
+  for(const it of list){const cy=churchYear(it.date);if(!groups.has(cy.start))groups.set(cy.start,{cy,items:[]});groups.get(cy.start).items.push(it)}
+  document.getElementById("list").innerHTML=list.length?[...groups.values()].map(g=>
+    `<section class="year"><h2>Church Year ${g.cy.label}<small>Lectionary Year ${g.cy.cycle} · ${g.items.filter(i=>i.url).length} videos</small></h2><ul>${g.items.map(row).join("")}</ul></section>`).join("")
+    :`<p class="empty">No services match “${esc(q)}”.</p>`;
+}
+
+function renderLatest(fb){
+  const L=services[0];if(!L)return;
+  const p=prog[L.url];
+  let h=`<button class="feature" type="button" data-u="${esc(L.url)}"><span class="k">${p&&p.t>30&&!p.done?"Continue watching":"Most recent recording"}</span><span class="t">${esc(L.title)}</span><span class="d">${fmt.format(dt(L.date))}</span></button>`;
+  // The archive lags behind Facebook by a few weeks; point at the newest broadcast too.
+  if(fb)h+=`<a class="fbnote" href="${esc(fb)}" target="_blank" rel="noopener"><b>Newer services are on Facebook first</b><span>The church posts recordings to its archive a few weeks after Sunday. Tap to watch the latest broadcast on Facebook.</span></a>`;
+  document.getElementById("latest").innerHTML=h;
+}
+
+// Player
+const player=document.getElementById("player"),video=document.getElementById("video");
+let current=null,lastSave=0;
+function openPlayer(url,push=true){
+  const it=services.find(s=>s.url===url);if(!it)return;
+  current=it;
+  document.getElementById("pTitle").textContent=it.title;
+  document.getElementById("pDate").textContent=fmt.format(dt(it.date));
+  document.getElementById("pErr").hidden=true;video.hidden=false;
+  document.getElementById("pOpen").href=url;
+  video.src=url;
+  player.hidden=false;document.body.style.overflow="hidden";
+  if(push)history.pushState({player:url},"");
+  video.play().catch(()=>{});
+}
+function closePlayer(){
+  if(!current)return;
+  record(true);
+  video.pause();video.removeAttribute("src");video.load();
+  current=null;player.hidden=true;document.body.style.overflow="";
+  render();renderLatest(window._fb);
+}
+function record(force){
+  if(!current||!video.duration)return;
+  const now=Date.now();if(!force&&now-lastSave<5000)return;lastSave=now;
+  const done=video.ended||video.currentTime/video.duration>.9;
+  prog[current.url]={t:done?0:Math.floor(video.currentTime),done:done||!!(prog[current.url]&&prog[current.url].done)};
+  saveProg();
+}
+video.addEventListener("loadedmetadata",()=>{const p=current&&prog[current.url];if(p&&p.t>30&&!p.done)video.currentTime=p.t});
+video.addEventListener("timeupdate",()=>record(false));
+video.addEventListener("pause",()=>record(true));
+video.addEventListener("ended",()=>record(true));
+video.addEventListener("error",()=>{if(current){video.hidden=true;document.getElementById("pErr").hidden=false}});
+document.getElementById("pClose").addEventListener("click",()=>{if(history.state&&history.state.player)history.back();else closePlayer()});
+window.addEventListener("popstate",()=>{if(!player.hidden)closePlayer()});
+document.addEventListener("visibilitychange",()=>{if(document.hidden)record(true)});
+document.addEventListener("click",e=>{const b=e.target.closest("button[data-u]");if(b)openPlayer(b.dataset.u)});
+document.getElementById("q").addEventListener("input",render);
+
+// Live status in Columbus time: Sunday 10:30; the stream starts shortly before.
+function eastern(){
+  const p=Object.fromEntries(new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",weekday:"short",hour:"numeric",minute:"numeric",hourCycle:"h23"}).formatToParts(new Date()).map(x=>[x.type,x.value]));
+  return{wd:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].indexOf(p.weekday),m:+p.hour*60+ +p.minute};
+}
+function updateLive(){
+  const {wd,m}=eastern(),start=630,el=document.getElementById("live");
+  const on=wd===0&&m>=start-15&&m<start+90;
+  el.classList.toggle("on",on);
+  let sub;
+  if(on)sub=m<start?`Starting in ${start-m} min`:"Streaming now";
+  else{
+    let mins=((7-wd)%7)*1440+start-m;if(mins<=0)mins+=7*1440;
+    const d=Math.floor(mins/1440),h=Math.floor(mins%1440/60);
+    sub=d>=1?`Next stream in ${d} day${d>1?"s":""}${h?`, ${h} hr`:""}`:`Next stream in ${h} hr ${mins%60} min`;
+  }
+  document.getElementById("liveLabel").textContent=on?"Live now · Sunday Eucharist":"Sunday Eucharist, 10:30 a.m.";
+  document.getElementById("liveSub").textContent=sub+" · Facebook";
+}
+updateLive();setInterval(updateLive,30000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)updateLive()});
+
+fetch("services.json",{cache:"no-cache"}).then(r=>r.json()).then(d=>{
+  services=d.services||[];unavailable=d.unavailable||[];window._fb=d.latestFacebook;
+  if(d.checked)document.getElementById("checked").textContent=`Archive last updated from trinitycolumbus.org on ${fmt.format(dt(d.checked))}. It refreshes automatically every week.`;
+  render();renderLatest(d.latestFacebook);
+}).catch(()=>{document.getElementById("list").innerHTML='<p class="empty">Couldn\'t load the service list. Check your connection and reopen the app.</p>'});
+</script>
+</body>
+</html>

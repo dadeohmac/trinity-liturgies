@@ -1,0 +1,28 @@
+name: Refresh archive
+
+on:
+  schedule:
+    # Mondays and Thursdays, 14:00 UTC (morning in Columbus)
+    - cron: "0 14 * * 1,4"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/scrape.py
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- services.json; then echo "No change"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add services.json
+          git commit -m "Refresh archive"
+          git push
