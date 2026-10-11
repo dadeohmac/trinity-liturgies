@@ -192,7 +192,12 @@ footer{color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:
     </div>
 
     <div id="sheetInapp" hidden style="display:flex;flex-direction:column;gap:12px">
-      <p>This page is open inside another app, which can't add icons to your Home Screen. Open it in <b>Safari</b> instead: tap <b>•••</b> or the compass and choose <b>Open in Safari</b>, or copy the link and paste it into Safari.</p>
+      <p id="inappIos">This page is open inside another app, which can't add icons to your Home Screen. Open it in <b>Safari</b> instead: tap <b>•••</b> or the compass and choose <b>Open in Safari</b>, or copy the link and paste it into Safari.</p>
+      <p id="inappAndroid" hidden>This page is open inside another app, which can't add icons to your Home Screen. Open it in <b>Chrome</b> instead: tap the <b>⋮</b> menu and choose <b>Open in Chrome</b> or <b>Open in browser</b>, or copy the link and paste it into Chrome.</p>
+    </div>
+
+    <div id="sheetAndroid" hidden>
+      <ol class="steps" id="androidSteps"></ol>
     </div>
 
     <div id="sheetOther" hidden style="display:flex;flex-direction:column;gap:12px">
@@ -337,8 +342,20 @@ const APP_URL=location.origin+location.pathname;
 const ua=navigator.userAgent;
 const isIOS=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);
 const isStandalone=navigator.standalone===true||matchMedia("(display-mode: standalone)").matches;
-const isInApp=/FBAN|FBAV|FB_IAB|Instagram|LinkedInApp|Line\/|GSA\/|Snapchat|Twitter|MicroMessenger|DuckDuckGo\/7/.test(ua);
-const isMobile=isIOS||/Android/.test(ua);
+const isAndroid=/Android/.test(ua);
+// In-app browsers (Facebook, Gmail, Instagram…) can't install. On Android, a WebView marks itself with "; wv)".
+const isInApp=/FBAN|FBAV|FB_IAB|Instagram|LinkedInApp|Line\/|GSA\/|Snapchat|Twitter|MicroMessenger|DuckDuckGo\/7/.test(ua)||(isAndroid&&/; wv\)/.test(ua));
+const isMobile=isIOS||isAndroid;
+const androidBrowser=/SamsungBrowser/.test(ua)?"samsung":/Firefox/.test(ua)?"firefox":/EdgA/.test(ua)?"edge":"chrome";
+const ANDROID_STEPS={
+  chrome:["Tap the <b>⋮</b> menu at the top right of Chrome.","Tap <b>Install app</b>. On some phones it says <b>Add to Home screen</b>.","Tap <b>Install</b> (or <b>Add</b>). The Trinity icon appears on your Home screen and in your app list."],
+  samsung:["Tap the <b>≡</b> menu at the bottom right of Samsung Internet.","Tap <b>Add page to</b>, then <b>Home screen</b>. On some versions you'll see <b>Install</b> or a download icon in the address bar instead; tap that.","Tap <b>Add</b>. The Trinity icon appears on your Home screen."],
+  firefox:["Tap the <b>⋮</b> menu in Firefox.","Tap <b>Add app to Home screen</b> (or <b>Install</b>).","Tap <b>Add</b>. The Trinity icon appears on your Home screen."],
+  edge:["Tap the <b>⋯</b> menu at the bottom of Edge.","Tap <b>Add to phone</b> (or <b>Install app</b>).","Tap <b>Install</b>. The Trinity icon appears on your Home screen."]
+};
+document.getElementById("androidSteps").innerHTML=ANDROID_STEPS[androidBrowser].map(s=>`<li><div>${s}</div></li>`).join("");
+document.getElementById("inappIos").hidden=isAndroid;
+document.getElementById("inappAndroid").hidden=!isAndroid;
 let deferredPrompt=null;
 const inst=document.getElementById("install"),sheet=document.getElementById("sheet");
 document.getElementById("appLink").value=APP_URL;
@@ -352,22 +369,25 @@ function showBanner(title,sub,btn){
   inst.hidden=false;
 }
 function openSheet(which){
-  for(const id of["sheetIos","sheetInapp","sheetOther"])document.getElementById(id).hidden=id!==which;
+  for(const id of["sheetIos","sheetInapp","sheetAndroid","sheetOther"])document.getElementById(id).hidden=id!==which;
   sheet.hidden=false;
 }
 if(!isStandalone){
-  if(isIOS&&isInApp)showBanner("Get the Trinity app","Open this page in Safari first","How");
+  if(isInApp&&isMobile)showBanner("Get the Trinity app",`Open this page in ${isIOS?"Safari":"Chrome"} first`,"How");
   else if(isIOS)showBanner("Get the Trinity app","Add it to your Home Screen in 3 taps","Show me");
-  else if(!isMobile)showBanner("Get the Trinity app","Install it on your phone","How");
+  // Android browsers may not offer their install prompt; fall back to menu instructions.
+  else if(isAndroid)setTimeout(()=>{if(!deferredPrompt)showBanner("Get the Trinity app","Add it to your Home screen in 3 taps","Show me")},3000);
+  else showBanner("Get the Trinity app","Install it on your phone","How");
 }
-// Chrome may not offer its install prompt; fall back to menu instructions.
-if(!isStandalone&&/Android/.test(ua))setTimeout(()=>{if(!deferredPrompt)showBanner("Get the Trinity app","Add it to your Home Screen","How")},3000);
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;showBanner("Get the Trinity app","Install it on this phone","Install")});
 window.addEventListener("appinstalled",()=>{inst.hidden=true;deferredPrompt=null});
 document.getElementById("instBtn").addEventListener("click",async()=>{
   if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice.catch(()=>{});deferredPrompt=null;inst.hidden=true;return}
-  openSheet(isIOS&&isInApp?"sheetInapp":isIOS?"sheetIos":"sheetOther");
+  openSheet(isInApp&&isMobile?"sheetInapp":isIOS?"sheetIos":isAndroid?"sheetAndroid":"sheetOther");
 });
+// A minimal service worker makes Chrome more willing to offer one-tap install, and shows a
+// friendly page when opened offline. It caches nothing, so the app never goes stale.
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 document.getElementById("instX").addEventListener("click",()=>{inst.hidden=true;try{localStorage.setItem("trinity-install-dismissed",String(Date.now()))}catch(e){}});
 document.getElementById("sheetClose").addEventListener("click",()=>{sheet.hidden=true});
 sheet.addEventListener("click",e=>{if(e.target===sheet)sheet.hidden=true});
