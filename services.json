@@ -1,6 +1,26 @@
 {
  "services": [
   {
+   "date": "2026-10-11",
+   "title": "Pentecost 20",
+   "url": "https://www.dropbox.com/scl/fi/84ag8mmpzugaze2afbz9f/261011-Pentecost-20-10-11-26.mp4?rlkey=3tclwms6b4qugkqemhvt26om9&raw=1"
+  },
+  {
+   "date": "2026-10-04",
+   "title": "Feast of St. Francis",
+   "url": "https://www.dropbox.com/scl/fi/hfpe5jdgoro60neozt2vw/261004-St-Francis-10-4-26.mp4?rlkey=hst4qeaqb9hdff7t63fdto3dl&raw=1"
+  },
+  {
+   "date": "2026-09-27",
+   "title": "Pentecost 18",
+   "url": "https://www.dropbox.com/scl/fi/3nvkim45ien2mz22ibtub/260927-Pentecost-18-9-27-26.mp4?rlkey=u9fxk0bzgl4f7jn9k968cyvjg&raw=1"
+  },
+  {
+   "date": "2026-09-20",
+   "title": "Pentecost 17",
+   "url": "https://www.dropbox.com/scl/fi/5vyegr5tkz149ecwno8oq/260920-Pentecost-17-9-20-26.mp4?rlkey=x4zbhkyn2p37uyqlro0e076xj&raw=1"
+  },
+  {
    "date": "2026-09-06",
    "title": "Pentecost 15",
    "url": "https://www.dropbox.com/scl/fi/2us3qn8rjdd3rutjdzabd/260906-Pentecost-15-9-6-26.mp4?rlkey=0olgozyrxkfc5t7p0uorzw1o4&raw=1"
@@ -423,6 +443,10 @@
  ],
  "unavailable": [
   {
+   "date": "2026-10-18",
+   "title": "Mass on the Grass"
+  },
+  {
    "date": "2026-09-13",
    "title": "Pentecost 16"
   },
@@ -471,6 +495,6 @@
    "title": "Christmas 2"
   }
  ],
- "latestFacebook": "https://www.facebook.com/trinitycolumbus/videos/1455159646722830/",
- "checked": "2026-10-11"
+ "latestFacebook": "https://www.facebook.com/trinitycolumbus/videos/1205431515140076/",
+ "checked": "2026-10-26"
 }
