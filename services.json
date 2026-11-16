@@ -1,6 +1,21 @@
 {
  "services": [
   {
+   "date": "2026-11-08",
+   "title": "Pentecost 24",
+   "url": "https://www.dropbox.com/scl/fi/ctgl42up36tz1e0kspdgj/261108-Pentecost-24-11-8-26.mp4?rlkey=akj6v6dqhk6aaztj0xvc5c98z&raw=1"
+  },
+  {
+   "date": "2026-11-01",
+   "title": "All Saints’ Sunday",
+   "url": "https://www.dropbox.com/scl/fi/n8v0qrbd36aco5yuirwpi/261101-Pentecost-23-11-1-26.mp4?rlkey=vlckvcxl8gcv9knx6yglrzjsu&raw=1"
+  },
+  {
+   "date": "2026-10-25",
+   "title": "Pentecost 22",
+   "url": "https://www.dropbox.com/scl/fi/x3p2mxnh1r6gir1wd5cb4/261025-Pentecost-22-10-25-26.mp4?rlkey=q2eeyq22zem1nucrzw652yxf1&raw=1"
+  },
+  {
    "date": "2026-10-11",
    "title": "Pentecost 20",
    "url": "https://www.dropbox.com/scl/fi/84ag8mmpzugaze2afbz9f/261011-Pentecost-20-10-11-26.mp4?rlkey=3tclwms6b4qugkqemhvt26om9&raw=1"
@@ -495,6 +510,6 @@
    "title": "Christmas 2"
   }
  ],
- "latestFacebook": "https://www.facebook.com/trinitycolumbus/videos/1136821402221815/",
- "checked": "2026-11-09"
+ "latestFacebook": "https://www.facebook.com/trinitycolumbus/videos/985019140869871/",
+ "checked": "2026-11-16"
 }
